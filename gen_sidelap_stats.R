@@ -3,7 +3,6 @@
 setwd('/usr3/graduate/emelaas/Code/R/landsat_phenology/GRL')
 scenes <- read.table('overlap_scenes.txt',header=FALSE)
 scenes <- as.character(scenes[,1])
-scenes <- scenes[-c(1,2,7,46,50,59,79,80,82,83,84)]
 
 scenes2 <- scenes
 scenes2[22] <- 'mws_green_bay'
