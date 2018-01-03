@@ -1,6 +1,6 @@
 ##This script will generate long-term mean and annual 32km maps of spring and autumn phenology
 ##for a given Landast overlap scene
-
+ 
 system.time({
   library(ncdf4)
   require(rgdal)
