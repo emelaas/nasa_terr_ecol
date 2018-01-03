@@ -14,7 +14,6 @@ library(sandwich)
 setwd('/usr3/graduate/emelaas/Code/R/landsat_phenology/')
 scenes <- read.table('overlap_scenes.txt',header=FALSE)
 scenes <- as.character(scenes[,1])
-scenes <- scenes[-c(1,2,7,46,50,59,79,80,82,83,84)]
 
 #Register the parallel backend
 registerDoParallel(16)
