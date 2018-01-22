@@ -53,17 +53,9 @@ system.time({
   lon.crop <- crop(lon,extent(o_reproj))
   lon_vals = getValues(lon.crop)
   
-  setwd(paste('/projectnb/modislc/projects/te_phenology/landsat_stacks/',stack_loc,'/Daymet/',sep=""))
-  load('narr2landsat_pcam_s50_blumel')
-  pred.blumel <- pred.SPR
-  load('narr2landsat_pcam_s50_sprwarm')
-  pred.sprwarm <- pred.SPR
-  
+  setwd(paste('/projectnb/modislc/projects/te_phenology/landsat_stacks/',stack_loc,'/Daymet/',sep=""))  
   load('narr2landsat_obs_s50_dbf')  
   obs.SPR <- round(t(obs.SPR[,-c(1:2)]))
-  
-  
-  
   
   repmat = function(X,m,n){
     mx = dim(X)[1]
@@ -71,7 +63,7 @@ system.time({
     matrix(t(matrix(X,mx,nx*n)),mx*m,nx*n,byrow=T)} 
   
   chillDays <- matrix(NA,32,length(lon_vals))
-  for (yr in 1983:2013){
+  for (yr in 1984:2013){
     print(yr)
     
     #Load in NetCDF file data
@@ -89,7 +81,7 @@ system.time({
     tmean[tmean>5] <- 0
     tmean[tmean!=0] <- 1
     
-    tmean[1:244,] <- 0
+    tmean[1:305,] <- 0
     cum_tmean <- cumsum(tmean)
     
     tLF <- round(obs.SPR[(yr-1981),])
@@ -110,32 +102,6 @@ system.time({
   tmp.sub <- setValues(lon.crop,tmp)
   
   setwd(paste('/projectnb/modislc/projects/te_phenology/landsat_stacks/',stack_loc,'/Daymet/',sep=""))
-  save(tmp.sub,obs.SPR,chillDays,pred.sprwarm,pred.blumel,file = "narr2landsat_chillDays")
+  save(tmp.sub,obs.SPR,chillDays,file = "narr2landsat_chillDays")
   
-  blumel.diff <- abs(obs.SPR-pred.blumel)
-  sprwarm.diff <- abs(obs.SPR-pred.sprwarm)
-  blumel.adv <- sprwarm.diff-blumel.diff
-  
-  ###FIGURES###
-  
-  #Compare observed and predicted anomalies
-  blumel.adv <- rowMeans(blumel.adv)
-  chillDays <- rowMeans(chillDays)
-  
-  lm.pred <- lm(blumel.adv~chillDays)
-  lm.pred_coef <- round(coef(lm.pred),3)
-  r2 <- summary(lm.pred)$adj.r.squared
-  #x11(h=6,w=6)
-  pdf(h=6,w=6,paste('/projectnb/modislc/projects/te_phenology/figures/',stack_loc,'_32km_blumel_adv_vs_chillDays.pdf',sep=""))
-  plot(chillDays,blumel.adv,ylab='Photoperiod Advantage (days)',
-    xlab='No. Chill Days')
-  abline(lm.pred)
-  rp = vector('expression',2)
-  rp[1] = substitute(expression(italic(R)^2 == MYVALUE),
-    list(MYVALUE = format(r2,dig=2)))[2]
-  rp[2] = substitute(expression(y == MYVALUE2*x+MYVALUE3), 
-    list(MYVALUE2 = format(lm.pred_coef[2], digits = 4),
-      MYVALUE3 = format(lm.pred_coef[1], digits = 4)))[2]
-  legend('bottomright', legend = rp, bty = 'n')
-  dev.off()
 })
