@@ -19,7 +19,9 @@ system.time({
   scenes <- read.table('overlap_scenes.txt',header=FALSE)
   scenes <- as.character(scenes[,1])
   
-  #Loop through each site (i) and each time range (j) in increments of 15 between 15-120
+  setwd('/projectnb/modislc/projects/te_phenology/landsat_stacks')
+  
+  #Loop through each site (i) and each time range (j) in increments of 5 days between 5 and 120
   for (i in 1:75){
     for (j in 1:24){
       print(c(i,j))
@@ -137,14 +139,16 @@ system.time({
   COR[COR==9999] <- NA
   
   site_pcor[is.na(site_pcor)==1] <- 9999
-  w <- apply(site_pcor,1,which.min)
-  ST <- site_ST[cbind(seq_along(w), w)]
-  PCOR <- site_pcor[cbind(seq_along(w), w)]
+  w2 <- apply(site_pcor,1,which.min)
+  ST2 <- site_ST[cbind(seq_along(w2), w2)]
+  PCOR <- site_pcor[cbind(seq_along(w2), w2)]
   PCOR[PCOR==9999] <- NA
   
   Z <- site_z[cbind(seq_along(w), w)]
+  Z2 <- site_z[cbind(seq_along(w2), w2)]
   
   setwd('/projectnb/modislc/users/emelaas/scratch15/NASA_TE/R_files/')
-  save(site_ST,site_cor,site_pcor,ST,COR,PCOR,scenes,site_z,Z,w,file = "preseason_temp_cor_gdd_v4")
+  save(site_ST,site_cor,site_pcor,ST,ST2,COR,PCOR,scenes,site_z,Z,Z2,w,w2,
+    file = "preseason_temp_cor_gdd_v4")
   
 })
