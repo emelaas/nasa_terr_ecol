@@ -273,7 +273,7 @@ load('preseason_temp_cor_gdd')
 setwd('/usr3/graduate/emelaas/Code/R/landsat_phenology/GRL')
 scenes <- read.table('overlap_scenes.txt',header=FALSE)
 scenes <- as.character(scenes[,1])
-scenes <- scenes[-c(1,2,7,46,50,59,79,80,82,83,84)]
+#scenes <- scenes[-c(1,2,7,46,50,59,79,80,82,83,84)]
 scenes2 <- scenes
 scenes2[68] <- 'oa_springfield'
 scenes2[74] <- 'bp_kakwa'
@@ -321,12 +321,8 @@ for (i in 1:length(L2_tab)){
       tmean1 <- tmean
       tmean <- rbind(tmean1,tmean2)
       
-      if ((yr-1)%%4 == 0){
-        obs <- obs.SPR+366
-      } else {
-        obs <- obs.SPR+365
-      }
-      
+      obs <- obs.SPR+nrow(tmean1)
+
       #Calculate Pre-season mean temperature N days before SOS
       N <- w[wL2[j]]*5
       

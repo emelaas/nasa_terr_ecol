@@ -5,17 +5,11 @@ system.time({
   library(ncdf4)
   require(rgdal)
   library(raster)
-  library(foreach)
-  library(iterators)
-  library(doParallel)
   
   args = commandArgs(trailingOnly=T)
   stack_loc = args[1]  
   
-  #stack_loc <- "sup_memphis"
-  
-  #Register the parallel backend
-  registerDoParallel(16)
+  #stack_loc <- "wc_kakwa"
   
   deg2rad <- function(deg) {(deg * pi) / (180)}
   
@@ -71,8 +65,9 @@ system.time({
     load(paste('tmean_',yr,sep=""))
     tmean2 <- tmean
     load(paste('tmean_',yr-1,sep=""))
+    tmean1 <- tmean
     
-    tmean <- rbind(tmean,tmean2)
+    tmean <- rbind(tmean1,tmean2)
     
     m <- matrix(1:nrow(tmean))
     time <- repmat(m,1,ncol(tmean))
@@ -86,13 +81,10 @@ system.time({
     
     tLF <- round(obs.SPR[(yr-1981),])
     
-    for (i in ncol(tmean)){
-      if (is.na(tLF[i]) == 0){
-        if ((yr-1)%%4 == 0){
-          chillDays[(yr-1981),] <- cum_tmean[(tLF[i]+366),i]
-        } else {
-          chillDays[(yr-1981),] <- cum_tmean[(tLF[i]+365),i]
-        }
+    for (j in 1:ncol(tmean)){
+      if (is.na(tLF[j]) == 0){
+        chillDays[(yr-1981),j] <- cum_tmean[(tLF[j]+nrow(tmean1)),j]
+        print(j)
       }
     }
   }
